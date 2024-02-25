@@ -1,0 +1,25 @@
+# Dockerfile for Ansible image
+FROM python:3.9-slim
+
+LABEL maintainer="Your Name <your.email@example.com>"
+
+# Install dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ssh \
+       sshpass \
+       && rm -rf /var/lib/apt/lists/*
+
+# Install Ansible
+RUN pip install --no-cache-dir ansible
+
+# Create directories for playbook
+RUN mkdir -p /ansible
+
+WORKDIR /ansible
+
+# Copy the playbook into the container
+COPY playbook.yml .
+
+# Default command
+CMD ["ansible-playbook", "playbook.yml"]

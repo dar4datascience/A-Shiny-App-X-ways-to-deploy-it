@@ -1,0 +1,14 @@
+---
+title: "How to Deploy an App using Shinyserver?"
+---
+
+## Build code
+
+Based of `Dockerfile.shiny`
+
+```
+export IMAGE="dar4datascience/covidapp-shiny:demo"
+export FILE="Dockerfile.shiny"
+DOCKER_BUILDKIT=1 docker build --no-cache -f $FILE -t $IMAGE .
+docker run -p 8080:3838 $IMAGE
+```

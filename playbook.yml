@@ -1,0 +1,48 @@
+# playbook.yml
+---
+- name: Deploy Shiny Server Docker container
+  hosts: localhost
+  tasks:
+    - name: Install Docker dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg
+        - lsb-release
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Copy Dockerfile for Shiny Server
+      copy:
+        src: Dockerfile.shiny
+        dest: /ansible/Dockerfile.shiny
+
+    - name: Build Shiny Server Docker image
+      command: docker build -t shiny-server /ansible
+      args:
+        chdir: /ansible
+
+    - name: Run Shiny Server Docker container
+      docker_container:
+        name: shiny-server-container
+        image: shiny-server
+        state: started
+        ports:
+          - "3838:3838"
