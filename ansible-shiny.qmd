@@ -13,3 +13,13 @@ Running Ansible inside a Docker container to set up another Docker container for
 By following this approach, you can encapsulate the process of setting up the entire server environment with Ansible inside a Docker container, providing a consistent and reproducible deployment workflow.
 
 
+## Commnad
+
+Based of `Dockerfile.ansible`
+
+```
+export IMAGE="dar4datascience/ansible-shiny:demo"
+export FILE="Dockerfile.ansible"
+DOCKER_BUILDKIT=1 docker build --no-cache -f $FILE -t $IMAGE .
+docker run -p 8080:3838 $IMAGE
+```

@@ -1,7 +1,6 @@
 # Dockerfile for Ansible image
 FROM python:3.9-slim
 
-LABEL maintainer="Your Name <your.email@example.com>"
 
 # Install dependencies
 RUN apt-get update \
