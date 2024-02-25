@@ -3,31 +3,21 @@
 - name: Deploy Shiny Server Docker container
   hosts: localhost
   tasks:
-    - name: Install Docker dependencies
+    - name: Install Git
       apt:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - gnupg
-        - lsb-release
-
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/debian/gpg
+        name: git
         state: present
 
-    - name: Add Docker repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
-        state: present
+    - name: Clone repository
+      git:
+        repo: https://github.com/dar4datascience/A-Shiny-App-X-ways-to-deploy-it.git
+        dest: /tmp/shiny-app
 
-    - name: Install Docker
-      apt:
-        name: docker-ce
-        state: present
+    - name: Copy app folder to Shiny Server
+      copy:
+        src: /tmp/shiny-app/app
+        dest: /srv/shiny-server/
+        remote_src: yes
 
     - name: Copy Dockerfile for Shiny Server
       copy:
