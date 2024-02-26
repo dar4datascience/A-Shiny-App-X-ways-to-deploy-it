@@ -41,4 +41,7 @@
         recurse: yes
 
     - name: Ensure Shiny Server is running
-      command: shiny-server &
+      become: yes
+      ansible.builtin.service:
+        name: shiny-server
+        state: started

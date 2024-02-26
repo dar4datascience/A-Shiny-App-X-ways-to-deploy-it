@@ -21,5 +21,5 @@ Based of `Dockerfile.ansible`
 export IMAGE="dar4datascience/ansible-shiny:demo"
 export FILE="Dockerfile.ansible"
 DOCKER_BUILDKIT=1 docker build --no-cache -f $FILE -t $IMAGE .
-docker run -p 8080:3939 $IMAGE
+docker run -p 3939:3838 $IMAGE
 ```

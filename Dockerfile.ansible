@@ -8,7 +8,24 @@ RUN apt-get update \
        sshpass \
        python3 \
        python3-pip \
+       curl \
+       sudo \
     && rm -rf /var/lib/apt/lists/*
+
+# Install systemd
+RUN apt-get update && apt-get install -y systemd && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Remove unnecessary systemd services
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+VOLUME [ "/sys/fs/cgroup" ]
 
 # Install Ansible
 RUN pip3 install ansible
@@ -21,13 +38,13 @@ RUN mkdir -p /ansible
 
 WORKDIR /ansible
 
-# # Install curl and sudo
-# RUN apt-get update && apt-get install -y curl sudo && rm -rf /var/lib/apt/lists/*
-
 # Copy the playbook into the container
 COPY playbook.yml .
 
-EXPOSE 3939
+EXPOSE 3838
 
-# Default command
-CMD ["ansible-playbook", "playbook.yml"]
+# Run the playbook during the build
+RUN ["ansible-playbook", "playbook.yml"]
+
+# Command to run the application
+CMD ["/usr/bin/shiny-server"]
