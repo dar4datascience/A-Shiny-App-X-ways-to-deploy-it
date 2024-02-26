@@ -21,20 +21,13 @@ RUN mkdir -p /ansible
 
 WORKDIR /ansible
 
-# Install curl and sudo
-RUN apt-get update && apt-get install -y curl sudo && rm -rf /var/lib/apt/lists/*
-
-# Create a new user "dockeruser" and add it to sudo group
-RUN useradd -m dockeruser && echo "dockeruser:dockeruser" | chpasswd && adduser dockeruser sudo
-
-# Allow dockeruser to run sudo commands without a password
-RUN echo "dockeruser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dockeruser
-
-# Switch to new user
-USER dockeruser
+# # Install curl and sudo
+# RUN apt-get update && apt-get install -y curl sudo && rm -rf /var/lib/apt/lists/*
 
 # Copy the playbook into the container
 COPY playbook.yml .
+
+EXPOSE 3939
 
 # Default command
 CMD ["ansible-playbook", "playbook.yml"]
