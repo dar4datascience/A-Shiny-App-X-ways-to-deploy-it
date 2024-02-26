@@ -41,7 +41,4 @@
         recurse: yes
 
     - name: Ensure Shiny Server is running
-      systemd:
-        name: shiny-server
-        state: started
-        enabled: yes
+      command: shiny-server &
