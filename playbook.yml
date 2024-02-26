@@ -1,11 +1,22 @@
-# playbook.yml
 ---
-- name: Deploy Shiny Server Docker container
+- name: Deploy Shiny Server
   hosts: localhost
+  become: yes
   tasks:
-    - name: Install Git
+    - name: Update package sources
       apt:
-        name: git
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - git-core
+          - libssl-dev
+          - libcurl4-gnutls-dev
+          - curl
+          - libsodium-dev
+          - libxml2-dev
+          - libicu-dev
         state: present
 
     - name: Clone repository
@@ -19,26 +30,18 @@
         dest: /srv/shiny-server/
         remote_src: yes
 
-    - name: Ensure /ansible directory exists
+    - name: Install R packages
+      command: R -e "install.packages(c('plotly', 'forecast', 'jsonlite', 'ggplot2', 'htmltools'), repos='http://cran.rstudio.com/')"
+
+    - name: Change ownership of Shiny Server directory
       file:
-        path: /ansible
-        state: directory
+        path: /srv/shiny-server/
+        owner: shiny
+        group: shiny
+        recurse: yes
 
-    - name: Copy Dockerfile for Shiny Server
-      copy:
-        src: Dockerfile.shiny
-        dest: /ansible/Dockerfile.shiny
-        remote_src: yes
-
-    - name: Build Shiny Server Docker image
-      command: docker build -t shiny-server /ansible
-      args:
-        chdir: /ansible
-
-    - name: Run Shiny Server Docker container
-      docker_container:
-        name: shiny-server-container
-        image: shiny-server
+    - name: Ensure Shiny Server is running
+      systemd:
+        name: shiny-server
         state: started
-        ports:
-          - "3838:3838"
+        enabled: yes

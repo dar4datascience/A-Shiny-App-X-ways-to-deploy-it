@@ -1,21 +1,37 @@
 # Dockerfile for Ansible image
-FROM python:3.9-slim
-
+FROM rocker/shiny:4.0.5
 
 # Install dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        ssh \
        sshpass \
-       && rm -rf /var/lib/apt/lists/*
+       python3 \
+       python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Ansible
-RUN pip install --no-cache-dir ansible
+RUN pip3 install ansible
+
+# Copy app files
+COPY ./app /app
 
 # Create directories for playbook
 RUN mkdir -p /ansible
 
 WORKDIR /ansible
+
+# Install curl and sudo
+RUN apt-get update && apt-get install -y curl sudo && rm -rf /var/lib/apt/lists/*
+
+# Create a new user "dockeruser" and add it to sudo group
+RUN useradd -m dockeruser && echo "dockeruser:dockeruser" | chpasswd && adduser dockeruser sudo
+
+# Allow dockeruser to run sudo commands without a password
+RUN echo "dockeruser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dockeruser
+
+# Switch to new user
+USER dockeruser
 
 # Copy the playbook into the container
 COPY playbook.yml .
