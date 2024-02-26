@@ -1,0 +1,11 @@
+
+## Commnad
+
+Based of `Dockerfile.rhino`
+
+```
+export IMAGE="dar4datascience/rhino-shiny:demo"
+export FILE="Dockerfile.rhino"
+DOCKER_BUILDKIT=1 docker build --no-cache -f $FILE -t $IMAGE .
+docker run -p 3939:7860 $IMAGE
+```

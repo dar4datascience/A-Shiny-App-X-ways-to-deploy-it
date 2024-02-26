@@ -1,9 +1,9 @@
 FROM rocker/shiny:4.0.5
 
-# Use deb.debian.org as package repository
-RUN sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/deb.debian.org\/debian\//g' /etc/apt/sources.list
+# Use Ubuntu repositories
+RUN sed -i 's/http:\/\/deb.debian.org\/debian\//http:\/\/archive.ubuntu.com\/ubuntu\//g' /etc/apt/sources.list
 
-# Install system requirements for index.R as needed
+# Update package sources
 RUN apt-get update && apt-get install -y \
     --no-install-recommends \
     git-core \
@@ -20,12 +20,12 @@ ENV _R_SHLIB_STRIP_=true
 
 # Install R packages
 RUN install2.r --error --skipinstalled \
-    shiny \
+    plotly \
     forecast \
     jsonlite \
     ggplot2 \
-    htmltools \
-    plotly
+    htmltools 
+    
 
 # Copy app files
 COPY ./app/* /srv/shiny-server/

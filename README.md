@@ -11,6 +11,9 @@ Certainly, here's the updated syllabus with RStudio Server deployment included:
 - [ ] **Deploying Dockerized Shiny App**
    - Guidelines on deploying the Dockerized Shiny app on a local machine or server.
 
+- [ ] **Deploying Packaged Shiny App**
+   - Rhino framework for packaging a Shiny App using renv.
+
 - [ ] **Deploying with RStudio Server**
    - Introduction to RStudio Server and instructions on deploying your Shiny app using RStudio Server, including configuration for scalability and security.
 

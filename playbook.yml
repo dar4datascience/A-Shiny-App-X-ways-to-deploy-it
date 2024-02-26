@@ -19,10 +19,16 @@
         dest: /srv/shiny-server/
         remote_src: yes
 
+    - name: Ensure /ansible directory exists
+      file:
+        path: /ansible
+        state: directory
+
     - name: Copy Dockerfile for Shiny Server
       copy:
         src: Dockerfile.shiny
         dest: /ansible/Dockerfile.shiny
+        remote_src: yes
 
     - name: Build Shiny Server Docker image
       command: docker build -t shiny-server /ansible
